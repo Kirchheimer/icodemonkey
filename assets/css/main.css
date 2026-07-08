@@ -674,3 +674,25 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
     [data-page="case-studies"] .tab-panel { padding: 1.5rem; }
     [data-page="case-studies"] .tab-btn { padding: 0.6rem 0.9rem; font-size: 0.85rem; }
 }
+
+/* ---------- Bottom-of-page nav: emphasize the next-step CTA ---------- */
+.site-nav[aria-label="end of page"] {
+    border-top: 1px solid var(--glass-border);
+    border-bottom: none;
+    background: linear-gradient(180deg, rgba(10,10,15,0.4), rgba(10,10,15,0.85));
+}
+.site-nav[aria-label="end of page"] .cta a {
+    color: #0a0a0f;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    box-shadow: 0 0 18px rgba(0, 210, 255, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.site-nav[aria-label="end of page"] .cta a:hover {
+    color: #0a0a0f;
+    background: linear-gradient(135deg, #fff, var(--primary));
+    transform: translateY(-1px);
+    box-shadow: 0 0 24px rgba(0, 210, 255, 0.6);
+}

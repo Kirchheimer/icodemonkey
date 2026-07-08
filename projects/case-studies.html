@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Studies | AIKennel</title>
+    <meta name="description" content="Selected case studies from Will Kirchheimer — platform engineering, modernization, AI-driven workflows, and accessible web systems.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body data-page="case-studies">
+
+    <nav class="site-nav" aria-label="Primary">
+        <div class="site-nav-inner">
+            <a href="../index.html" class="brand"><span>AIKennel</span></a>
+            <ul>
+                <li><a href="index.html">Resume</a></li>
+                <li><a href="case-studies.html" class="active">Case Studies</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="cs-shell">
+        <header class="cs-intro">
+            <h1>Case Studies</h1>
+            <p>
+                A few of the projects I'm proud of: platform cleanups that recovered six-figure AWS spend, AI-augmented QA platforms, and modernization work that turned a slow, fragile estate into something operations could actually run.
+            </p>
+        </header>
+
+        <!-- ============================================================
+             Tabs
+             Each tab is htmx-ready: the button hx-gets a fragment from
+             /api/cases/<tab> and swaps it into the active panel. Until
+             that endpoint exists, the inline <div data-tab="..."> blocks
+             below provide the content directly.
+             ============================================================ -->
+        <div role="tablist" aria-label="Case studies" data-tabs
+             hx-target="#case-panel-active"
+             hx-swap="innerHTML"
+             hx-indicator=".htmx-indicator">
+
+            <button class="tab-btn active" role="tab"
+                    data-tab="samgov"
+                    hx-get="/api/cases/samgov"
+                    hx-trigger="click">SAM.gov Platform Cleanup</button>
+
+            <button class="tab-btn" role="tab"
+                    data-tab="gsa-qa"
+                    hx-get="/api/cases/gsa-qa"
+                    hx-trigger="click">GSA Automated Testing</button>
+
+            <button class="tab-btn" role="tab"
+                    data-tab="thinksheet"
+                    hx-get="/api/cases/thinksheet"
+                    hx-trigger="click">ThinkSheet v2</button>
+
+            <button class="tab-btn" role="tab"
+                    data-tab="wcagscanner"
+                    hx-get="/api/cases/wcagscanner"
+                    hx-trigger="click">WCAGScanner.com</button>
+
+            <button class="tab-btn" role="tab"
+                    data-tab="migrations"
+                    hx-get="/api/cases/migrations"
+                    hx-trigger="click">Migrations &amp; Integrations</button>
+
+            <button class="tab-btn" role="tab"
+                    data-tab="samgov-dev"
+                    hx-get="/api/cases/samgov-dev"
+                    hx-trigger="click">SAM.gov Developer Environments</button>
+
+            <span class="htmx-indicator" aria-hidden="true">· loading…</span>
+        </div>
+
+        <!--
+          The active panel is a single swap target. All tab bodies live
+          inside it; only one is visible at a time (toggled in app.js).
+          Marking it id="case-panel-active" lets the htmx endpoints above
+          replace its contents once the backend lands.
+        -->
+        <div id="case-panel-active">
+
+            <!-- ====== SAM.gov ====== -->
+            <div class="tab-panel active" data-tab="samgov" role="tabpanel" aria-labelledby="tab-samgov">
+                <h2>SAM.gov Platform Cleanup</h2>
+                <p class="role-line">Technical Architect · REI Systems · 2025</p>
+
+                <p>
+                    Recent platform review work on the SAM.gov deployment uncovered systemic configuration drift that manifested as intermittent container restart spikes, high cross-service latency, and rising host resource allocation. The platform runs in a large, Rancher-managed container environment and required cross-team access to logs and configuration state to diagnose.
+                </p>
+
+                <h3>Symptom &amp; Impact</h3>
+                <ul>
+                    <li><strong>Symptom:</strong> Intermittent container restart spikes and race conditions across multiple micro-services</li>
+                    <li><strong>Impact:</strong> Operations responded by increasing host resources over six months — masking the real cause and inflating platform cost</li>
+                    <li><strong>Contributing noise:</strong> Newly migrated micro-services were initially (and incorrectly) blamed for the increased load</li>
+                </ul>
+
+                <h3>The Hidden Issue</h3>
+                <p>
+                    Untracked cache-timeout changes (introduced during an upstream Spring Boot upgrade) caused cache entries to persist longer than expected, producing a slow six-month creep of unexpired values. This in turn increased memory pressure and produced downstream timeouts and retries.
+                </p>
+
+                <h3>Investigation Approach</h3>
+                <ul>
+                    <li>Negotiated cross-vendor log access; aggregated logs and metrics spanning application, caching, and orchestrator layers</li>
+                    <li>Correlated request traces, access logs, and Redis / Spring cache metrics to rule out expected traffic surges</li>
+                    <li>Wrote targeted scripts to inspect cache contents and TTL distributions to verify un-expired entries and quantify growth</li>
+                </ul>
+
+                <h3>Findings &amp; Actions</h3>
+                <ul>
+                    <li>Identified the Spring Boot upgrade that changed a cache-life variable, increasing default cache TTLs and preventing expected eviction</li>
+                    <li>Implemented TTL corrective patches and tuned cache eviction policies; added guardrails to ETL and background jobs to avoid cache amplification</li>
+                    <li>Introduced idempotent operational scripts to prune stale caches and added monitoring alerts for cache TTL drift</li>
+                    <li>Improved centralized logging/alerting so dev and ops teams could see cache-level failures without siloed access</li>
+                </ul>
+
+                <h3>Results (before → after)</h3>
+                <ul>
+                    <li>Container restart spikes: ~40 spikes → 4–5 expected scheduled restarts per day</li>
+                    <li>Cross-service latency: &gt;80% reduction in peak latency spikes</li>
+                    <li>Redis daytime latency: dropped to match (or improve upon) off-peak levels</li>
+                    <li>Normal daily traffic surges: ceased producing system-wide latency events</li>
+                    <li>Host resource allocation: ~97% reduction in emergency resource overprovisioning</li>
+                </ul>
+
+                <p class="stack-line">
+                    <em>Note:</em> This case highlights the value of platform-level audits, cross-team log visibility, and guarding config drift during upstream dependency upgrades.
+                </p>
+            </div>
+
+            <!-- ====== GSA QA ====== -->
+            <div class="tab-panel" data-tab="gsa-qa" role="tabpanel" aria-labelledby="tab-gsa-qa">
+                <h2>GSA Automated Testing Program</h2>
+                <p class="role-line">Technical Architect · REI Systems · 2024 – 2025</p>
+
+                <p>
+                    Implemented a comprehensive automated testing program for multiple GSA applications to improve release velocity, reduce regressions, and centralize quality metrics across teams.
+                </p>
+
+                <h3>Scope</h3>
+                <p>
+                    End-to-end coverage including unit, integration, E2E, accessibility, performance, and visual regression testing across web applications and APIs.
+                </p>
+
+                <h3>Approach</h3>
+                <ul>
+                    <li>Adopted a test-pyramid strategy — fast unit/integration tests prioritized; targeted E2E suites for critical user journeys</li>
+                    <li>Containerized test runners and integrated automation into CI pipelines — every PR plus nightly for broader coverage</li>
+                    <li>Implemented accessibility checks (axe-core, Lighthouse), browser-driven E2E (Playwright, Puppeteer), and API integration tests covering service contracts and error paths</li>
+                    <li>Built synthetic performance checks and load smoke tests to catch response-time regressions pre-deploy</li>
+                    <li>Automated test data management: seeded fixtures, idempotent environment teardown, feature-flagged test targets</li>
+                </ul>
+
+                <h3>Tooling &amp; Pipelines</h3>
+                <ul>
+                    <li><strong>Test frameworks:</strong> Playwright, Puppeteer, Jest / Mocha, pytest (per service)</li>
+                    <li><strong>Accessibility &amp; performance:</strong> axe-core, Lighthouse, Lighthouse CI</li>
+                    <li><strong>CI/CD:</strong> GitHub Actions and Jenkins pipelines; parallelized runners to reduce wall time</li>
+                    <li><strong>Reporting:</strong> Automated HTML reports, coverage artifacts, dashboarded alerts for test failures and regressions</li>
+                </ul>
+
+                <h3>Implementation Highlights</h3>
+                <ul>
+                    <li>Containerized browser runners for consistent E2E execution across environments</li>
+                    <li>Parallelized E2E suites — selective smoke tests on PRs, full suites on nightly runs</li>
+                    <li>Stability guards: flaky-test isolation, retry policies with backoff, failure-triage automation to classify flaky vs. deterministic failures</li>
+                    <li>Integrated test-failure insights with centralized logging and tracing to speed root-cause analysis</li>
+                </ul>
+
+                <h3>Outcomes &amp; Impact</h3>
+                <ul>
+                    <li>Faster PR feedback loops, earlier defect detection, less rework during code review</li>
+                    <li>Measurable drop in post-deploy regressions and production incidents</li>
+                    <li>Reduced manual regression testing effort; faster, more reliable release cadence</li>
+                    <li>Improved accessibility posture — automated checks prevent regressions in key user flows</li>
+                </ul>
+
+                <h3>Next Steps</h3>
+                <ul>
+                    <li>Add quantitative metrics to reports (incident counts, MTTD, test-flakiness rates) on a weekly quality dashboard</li>
+                    <li>Expand synthetic load tests to include longer-duration soak tests for capacity planning</li>
+                    <li>Continue investment in test-data tooling to improve deterministic outcomes and reduce flakiness</li>
+                </ul>
+            </div>
+
+            <!-- ====== ThinkSheet ====== -->
+            <div class="tab-panel" data-tab="thinksheet" role="tabpanel" aria-labelledby="tab-thinksheet">
+                <h2>ThinkSheet v2 Modernization</h2>
+                <p class="role-line">Lead Platform Architect &amp; Full-Stack Engineer · 2024 – 2026</p>
+
+                <h3>The Conceptual Work &amp; Legacy Context</h3>
+                <p>
+                    THINKSheet Systems was founded in 1993 by William Stahl (a quantitative legal and real estate investment banking expert) and Dr. Roy Freedman (a pioneer in financial technology and architect of the NYSE Market Surveillance System). The platform was built to operationalize a groundbreaking paradigm: Optimized Professional Intelligence (PI) + Artificial Intelligence (AI).
+                </p>
+                <p>
+                    While typical financial platforms efficiently model quantitative variables, THINKSheet was designed to capture, model, and visualize the complex qualitative drivers that dictate high-stakes institutional decisions. Its conceptual origins trace back to complex economic models like the 1991 West Point Privatization Project, later expanding into country allocation apps for JPMorgan, research tools for Morgan Stanley, and corporate event-driven investment analysis.
+                </p>
+                <p>
+                    The original system combined advanced quantitative structures (originally built on early AI engines like InduceIT) with sprawling, custom Excel-based modeling ecosystems and Bloomberg Equities app integrations. Over decades of operation, this dense layer of domain intelligence became bottlenecked by its legacy delivery mechanisms: fragile desktop Excel runtimes, siloed local environments, and specialized terminal licensing. The objective of ThinkSheet v2 was to extract this institutional intelligence from its legacy desktop bounds and rebuild it as a secure, scalable, enterprise-grade cloud application without losing the nuance of its multi-variant qualitative scoring.
+                </p>
+
+                <h3>Modernization - Core Stack</h3>
+                <ul>
+                    <li><strong>Frontend:</strong> Vue 3, Vite, Pinia, Tailwind CSS</li>
+                    <li><strong>Backend:</strong> Node.js, Express API</li>
+                    <li><strong>Data Layer:</strong> PostgreSQL, Prisma ORM</li>
+                    <li><strong>Ops / Deployment:</strong> Docker, Docker Compose, Nginx, Cloudflare Tunnel, Linode VPS</li>
+                </ul>
+
+                <h3>Engineering &amp; Architecture Work</h3>
+                <ol>
+                    <li><strong>Re-Architecting the Proprietary Engine:</strong> Translated decades of complex, macro-heavy financial and qualitative evaluation models out of legacy desktop runtimes into an isolated Node.js calculation backend. Designed a highly relational schema in PostgreSQL via Prisma to manage dense, multi-variant project datasets, tracking compounding qualitative weights, user-defined risk profiles, and historical models. Built role-based access control (RBAC) and enterprise user management to allow institutional clients to safely isolate proprietary investment evaluations while enabling collaborative team editing.</li>
+                    <li><strong>Modernizing the Analytical Interface:</strong> Engineered a high-performance Vue 3 Single Page Application (SPA) utilizing Vite for optimized bundling and Pinia for reactive, centralized state management. Replicated the dense data density of the legacy terminal apps in a fluid, responsive web UI, allowing analysts to tweak qualitative sliders and instantly visualize shifting risk/reward profiles.</li>
+                    <li><strong>Containerized Infrastructure &amp; Zero-Trust DevOps:</strong> Architected a clean, multi-container Docker Compose stack separating frontend, API backend, and database layer to ensure complete parity between local development and production environments. Provisioned and hardened a Linode Linux VPS, leveraging Nginx as a reverse proxy routed through fixed internal service ports. Secured enterprise web access via Cloudflare Tunnels, entirely exposing the platform to authorized traffic without opening vulnerable, public inbound firewall ports on the host system.</li>
+                </ol>
+
+                <h3>Architectural Outcomes</h3>
+                <ul>
+                    <li><strong>Zero-Footprint Access:</strong> Migrated a complex enterprise financial tool from a rigid, desktop-bound installation to a modern web application accessible securely from any browser.</li>
+                    <li><strong>Eliminated Environment Drift:</strong> Containerization dropped environment-specific configuration bugs to zero, providing predictable, atomic deployments.</li>
+                    <li><strong>Robust Security Posture:</strong> By coupling Cloudflare Tunnels with isolated database containers, the surface area for network attacks was minimized to zero open inbound public ports, meeting strict institutional expectations.</li>
+                </ul>
+            </div>
+
+            <!-- ====== WCAGScanner ====== -->
+            <div class="tab-panel" data-tab="wcagscanner" role="tabpanel" aria-labelledby="tab-wcagscanner">
+                <h2>WCAGScanner.com</h2>
+                <p class="role-line">Founder / Lead developer / platform engineer · Jan 2025 – Present</p>
+
+                <p>
+                    A service-isolated QA platform — web crawling, accessibility scanning, performance analysis, and visual regression — co-founded with a small team. Built to take the pain out of large-site accessibility audits by running them in parallel browser runners against authenticated sessions.
+                </p>
+
+                <h3>Core Stack</h3>
+                <ul>
+                    <li><strong>Languages:</strong> JavaScript, HTML, CSS</li>
+                    <li><strong>Backend services:</strong> Node.js, Express, axios, bcryptjs, multer</li>
+                    <li><strong>Automation / testing:</strong> Playwright, Puppeteer, axe-core, Lighthouse, jsdom, cheerio</li>
+                    <li><strong>Frontend:</strong> Static HTML, htmx, Tailwind, DaisyUI, Chart.js</li>
+                    <li><strong>Storage / infrastructure:</strong> AWS S3, filesystem storage, Docker, Redis, Nginx</li>
+                </ul>
+
+                <h3>Platform Work</h3>
+                <ul>
+                    <li>Built a service-isolated QA platform with separate backend, storage, and service-runner containers</li>
+                    <li>Implemented crawling, discovery, accessibility scanning, performance analysis, and visual regression workflows</li>
+                    <li>Supported authenticated scanning flows with JWT + OTP login handling and session persistence</li>
+                    <li>Designed storage flows for local-filesystem use in development and AWS S3 in production</li>
+                    <li>Exposed application features through an Nginx reverse proxy with service-specific internal ports</li>
+                </ul>
+
+                <h3>Deployment Experience</h3>
+                <ul>
+                    <li>Ran the platform as a multi-container Docker Compose stack</li>
+                    <li>Used Nginx as the public reverse proxy for backend, storage, and runner services</li>
+                    <li>Managed service-specific port mapping and isolated runtime responsibilities</li>
+                    <li>Used Playwright-based runner containers for browser-driven scanning and screenshot capture</li>
+                    <li>Structured the app for repeatable local and production deployment on Linux hosts</li>
+                </ul>
+
+                <p class="stack-line">
+                    <strong>Skills:</strong> Accessibility testing &amp; WCAG/508 · site crawling &amp; form detection · visual regression · real-time scan status &amp; reporting · service-oriented application design
+                </p>
+            </div>
+
+            <!-- ====== Migrations ====== -->
+            <div class="tab-panel" data-tab="migrations" role="tabpanel" aria-labelledby="tab-migrations">
+                <h2>Migrations &amp; Platform Integrations</h2>
+                <p class="role-line">Cross-sector work · 2015 – Present</p>
+
+                <p>
+                    Two decades of moving content, code, and infrastructure between systems — federal to commercial, Drupal 7 to 10, Ektron to Drupal, on-prem to AWS, monolith to micro-services. The case studies above are the headline outcomes; the rest of the work is the connective tissue that makes any platform change survivable.
+                </p>
+
+                <h3>Cross-Sector Migrations</h3>
+                <p>
+                    Led data and application migrations across federal and educational environments, coordinating with stakeholders to preserve data integrity, privacy, and retention requirements.
+                </p>
+
+                <h3>Data Schema Mapping</h3>
+                <p>
+                    Designed canonical data models and mapping artifacts (entity-attribute mappings, field-level transformations, normalization rules) to translate between source systems and target platforms.
+                </p>
+
+                <h3>Migration Scripting &amp; Tooling</h3>
+                <p>
+                    Implemented repeatable, idempotent migration scripts and ETL processes (Python, SQL, ETL tools) with batching, retry / reconciliation, checksums, and rollback strategies to ensure safe cutovers.
+                </p>
+
+                <h3>Platform Documentation &amp; Runbooks</h3>
+                <p>
+                    Authored migration runbooks, operational playbooks, rollback plans, and platform-specific migration guides to support operators and auditors.
+                </p>
+
+                <h3>Optimization Testing</h3>
+                <p>
+                    Performed pre- and post-migration validation, performance / load testing, indexing optimization, and query profiling to tune systems for production throughput.
+                </p>
+
+                <h3>Solr &amp; ELK Configuration &amp; Audits</h3>
+                <p>
+                    Configured Solr cores (schema, analyzers, synonym handling, relevancy tuning) and ELK stacks (ingest pipelines, index lifecycle management, Kibana dashboards); conducted audits for indexing quality, log parsing accuracy, retention policies, and search relevance.
+                </p>
+
+                <h3>Other Application Work</h3>
+                <ul>
+                    <li><strong>Custom e-commerce platform:</strong> Built and maintained a bespoke PHP / MySQL commerce system with third-party integrations, staff training materials, and operational documentation</li>
+                    <li><strong>Social networking sites:</strong> Evaluated platforms, recommended PHPFox, and delivered custom modules, templates, and deployment support</li>
+                    <li><strong>Bespoke applications:</strong> WCAGScanner, CSV-driven site generators, custom e-commerce tooling, and internal tracking / reporting systems</li>
+                </ul>
+            </div>
+
+            <!-- ====== SAM.gov Developer Environments ====== -->
+            <div class="tab-panel" data-tab="samgov-dev" role="tabpanel" aria-labelledby="tab-samgov-dev">
+                <h2>Modernizing Developer Environments for GSA SAM.gov</h2>
+                <p class="role-line">Technical Architect · REI Systems · GSA IAE / SAM.gov</p>
+
+                <h3>Executive Summary</h3>
+                <p>
+                    The General Services Administration's System for Award Management (SAM.gov) is a critical pillar of federal procurement, processing billions of dollars in transactions. Tasked with supporting this vital infrastructure under the GSA COMET blanket purchase agreement, REI Systems faced severe delivery bottlenecks rooted in legacy, decentralized developer environments. Developers relied on traditional, government-issued Windows machines running localized XAMPP stacks &mdash; a configuration plagued by configuration drift, slow hardware distribution, and environmental mismatches.
+                </p>
+                <p>
+                    To overcome these challenges, a breakthrough cloud migration project was executed. The legacy architecture was replaced with a scalable <strong>Amazon Web Services (AWS) Cloud WorkSpaces</strong> environment integrated with a custom-engineered <strong>Docker</strong> containerization layer. By providing a virtual developer environment that perfectly mirrors the AWS production ecosystem &mdash; including local Apache, legacy-decoupled PHP engines, and dedicated Apache Solr search environments &mdash; the project eliminated local vs. production mismatching.
+                </p>
+
+                <h3>Key Performance Indicators (KPIs) Achieved</h3>
+                <ul>
+                    <li><strong>Developer Onboarding Time:</strong> Reduced from <strong>2 weeks to 2 hours</strong>.</li>
+                    <li><strong>Environment Configuration:</strong> Slashed from a week-long manual setup to a single-command automated spin-up.</li>
+                    <li><strong>Issue Diagnosis:</strong> Achieved near-instantaneous debugging and isolation of complex system bottlenecks.</li>
+                </ul>
+
+                <h3>The Legacy Environment: Challenges &amp; Bottlenecks</h3>
+                <p>Prior to the migration, engineers developed locally on physical, agency-issued Windows machines. This setup introduced compounding operational inefficiencies:</p>
+                <ul>
+                    <li><strong>Hardware-Bound Onboarding:</strong> Bringing a new developer onto the project required shipping physical, government-managed laptops. Delays in equipment transfer, security provisioning, and agency credentialing routinely burned the first two weeks of an engineer's contract.</li>
+                    <li><strong>The "XAMPP Fragility" &amp; Configuration Drift:</strong> Replicating the SAM.gov enterprise stack using localized XAMPP installations on Windows was notoriously unstable. Configuring the platform took up to a week per developer, requiring granular, error-prone manual tweaks to <code>php.ini</code>, Apache vhosts, and environment variables.</li>
+                    <li><strong>Legacy PHP Version Lock-ins:</strong> The underlying monolithic components of the legacy application suffered from strict language version dependencies. Managing co-existing legacy PHP installations alongside modern dependencies on a single Windows OS frequently caused local system conflicts.</li>
+                    <li><strong>Parity Mismatches (Local vs. Production):</strong> Developing on Windows (NTFS file systems, Windows-specific binaries) while targeting a Linux-based AWS enterprise production cloud introduced systemic "works on my machine" bugs. Edge-case bugs, permission errors, and routing idiosyncrasies were frequently caught only <em>after</em> deployment.</li>
+                </ul>
+
+                <h3>The Solution: AWS WorkSpaces + Core Docker Architecture</h3>
+                <p>
+                    The core of the modernization project lay in decoupling the developer environment from physical hardware and shifting the entire operating context into a secure, FedRAMP-compliant virtual desktop infrastructure (VDI), standardizing the codebase layer using containerization.
+                </p>
+
+                <pre class="diagram">[ Physical Endpoint / CAC Card ]
+               |
+               v  (Secure Streaming / WSP)
++--------------------------------------------------------------+
+| AWS GovCloud / WorkSpaces VDI (Windows/Linux)               |
+|                                                              |
+|  +--------------------------------------------------------+  |
+|  | Core Docker Engine (Mirrored Linux Context)             |  |
+|  |                                                        |  |
+|  |  +---------------+  +--------------+  +-------------+  |  |
+|  |  |  PHP Service  |  | Apache HTTPD |  | Solr Search |  |  |
+|  |  | (Legacy/Locked)|  |   Service    |  |   Cluster   |  |  |
+|  |  +---------------+  +--------------+  +-------------+  |  |
+|  +--------------------------------------------------------+  |
++--------------------------------------------------------------+</pre>
+
+                <h3>Architectural Breakdown</h3>
+                <ol>
+                    <li><strong>Amazon WorkSpaces Virtual Desktop:</strong> Developers use lightweight cloud desktops accessed securely via standard PIV/CAC smartcard authentication. This eradicated physical device shipping; new instances are now provisioned via AWS identity pools in minutes.</li>
+                    <li><strong>Core Docker Container Project:</strong> Rather than hosting application services natively inside the VDI instance OS, a tightly integrated Docker network blueprint was engineered. This containerized network encapsulated the entire runtime stack.</li>
+                    <li><strong>True Linux-to-Linux Parity:</strong> Because Docker runs natively on a Linux engine (or via isolated virtualization layers on the WorkSpace host), the developer's execution environment matches the exact kernel characteristics, file system rules, and memory management of the live AWS production target.</li>
+                    <li><strong>Isolated Version Encapsulation:</strong> Strict legacy PHP dependencies were isolated inside specific immutable Docker images. Developers can run disparate legacy blocks simultaneously without risking system-wide library pollution.</li>
+                </ol>
+
+                <h3>High-Value Impact: Mirrored Solr Environments &amp; Rapid Debugging</h3>
+                <p>
+                    The most significant engineering victory resulting from this architectural shift occurred within the platform's search architecture. SAM.gov relies heavily on <strong>Apache Solr</strong> for large-scale enterprise data queries, filtering, and indexing.
+                </p>
+                <h3>Accelerated Solr Troubleshooting</h3>
+                <p>Under the old paradigm, running a heavy, multi-core Solr cluster on a local Windows machine was unfeasible due to memory constraints and configuration mismatches. When production Solr bottlenecks occurred, developers were left "blind," forced to look at remote logs or safely guess the root cause.</p>
+                <p>By packing an exact, mirrored Apache Solr container instance directly into the core Docker setup, engineers gained a fully functioning, standalone Solr sandbox matching production data schemas.</p>
+                <ul>
+                    <li><strong>Isolate &amp; Conquer:</strong> Developers can reliably simulate production-scale workloads, trace slow-running query parameters, and test indexing modifications locally without impacting active stages.</li>
+                    <li><strong>Bottleneck Diagnoses:</strong> Intermittent timeouts, race conditions, and heavy indexing leaks that previously took weeks of distributed log analysis were isolated, replicated, and patched in hours.</li>
+                </ul>
+
+                <h3>Business and Operational Outcomes</h3>
+                <p>The realization of this cloud-native developer experience yielded immediate dividend returns for the GSA IAE team and REI Systems:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric / Capability</th>
+                            <th>Legacy XAMPP on Physical Windows</th>
+                            <th>New AWS WorkSpace + Docker Platform</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Developer Onboarding</strong></td>
+                            <td>~2 Weeks (Equipment transit + configuration)</td>
+                            <td><strong>~2 Hours</strong> (VDI spin-up + single <code>docker compose up</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stack Provisioning</strong></td>
+                            <td>5&ndash;7 Days (Manual step-by-step installs)</td>
+                            <td><strong>Minutes</strong> (Automated script pull via code repo)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Local vs. Prod Parity</strong></td>
+                            <td>Low (Windows OS vs. Production Linux Cloud)</td>
+                            <td><strong>Identical</strong> (Mirrored containers &amp; system kernels)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Solr Bug Remediation</strong></td>
+                            <td>Blind troubleshooting via logs / Trial-and-error</td>
+                            <td><strong>Immediate</strong> local sandboxing and bottleneck tracing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Security Compliance</strong></td>
+                            <td>Fragmented per endpoint</td>
+                            <td>Centralized via IAM, FedRAMP, and VPC boundaries</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Conclusion</h3>
+                <p>
+                    By engineering a container-first paradigm within AWS WorkSpaces, the SAM.gov development lifecycle was successfully untangled from local hardware limitations. The project proved that modernizing the <em>developer experience</em> is just as critical as modernizing application architecture. The result is a highly agile, highly scalable federal engineering workspace built to sustain continuous delivery.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <h2>AIKennel</h2>
+        <p>New Orleans, Louisiana · <a href="mailto:will.kirchheimer@gmail.com">will.kirchheimer@gmail.com</a></p>
+        <p style="margin-top: 1rem; opacity: 0.5;">© 2026 Will Kirchheimer. All rights reserved.</p>
+    </footer>
+
+    <!-- htmx is loaded so future AI endpoints (e.g. /api/ai/summarize?tab=samgov)
+         can drop in without touching the markup. The tab buttons above are
+         already wired with hx-get / hx-trigger / hx-target. -->
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    <script src="../assets/js/app.js" defer></script>
+</body>
+</html>

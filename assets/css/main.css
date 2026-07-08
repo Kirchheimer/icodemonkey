@@ -1,0 +1,676 @@
+/* ==========================================================================
+   AIKennel — shared theme
+   Dark, glass-panel, neon-accented. Shared across the marketing site,
+   resume, and case studies. Keep additions minimal and page-specific
+   styles inline (data-page=...) so this file stays the source of truth.
+   ========================================================================== */
+
+:root {
+    --primary: #00d2ff;
+    --secondary: #ff8c00;
+    --bg-dark: #0a0a0f;
+    --bg-panel: rgba(20, 20, 30, 0.7);
+    --text-main: #f0f0f0;
+    --text-muted: #a0a0a0;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-glow: 0 0 15px rgba(0, 210, 255, 0.5);
+    --max-w: 1200px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+a:hover { color: #fff; }
+::selection { background: var(--primary); color: var(--bg-dark); }
+
+/* ---------- Site nav ---------- */
+.site-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--glass-border);
+}
+.site-nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex; align-items: center; gap: 2rem;
+}
+.site-nav .brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    font-size: 1.05rem;
+}
+.site-nav .brand span {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.site-nav ul {
+    list-style: none;
+    display: flex; gap: 1.5rem;
+    margin-left: auto; padding: 0;
+}
+.site-nav a {
+    color: var(--text-muted);
+    font-size: 0.92rem; font-weight: 500;
+    padding: 0.4rem 0.6rem; border-radius: 6px;
+}
+.site-nav a:hover, .site-nav a.active { color: #fff; background: rgba(255,255,255,0.05); }
+
+/* ---------- Hero ---------- */
+.hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(to bottom, rgba(10, 10, 15, 0.3), var(--bg-dark)), url('../hero-bg.png') center/cover no-repeat;
+    background-attachment: fixed;
+}
+.hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, var(--bg-dark) 100%);
+}
+.hero-content {
+    position: relative; z-index: 10;
+    text-align: center; max-width: 900px;
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 4rem 3rem;
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+    animation: fadeIn 1s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.logo {
+    font-size: 4rem; font-weight: 900; margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px; text-transform: uppercase;
+}
+.tagline {
+    font-size: 1.5rem; font-weight: 300;
+    color: var(--text-muted); margin-bottom: 2rem;
+}
+.cta-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--bg-dark);
+    background: var(--primary);
+    border: none; border-radius: 30px;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--neon-glow);
+}
+.cta-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.8);
+    background: #fff; color: var(--bg-dark);
+}
+.cta-btn.secondary {
+    background: transparent; color: var(--text-main);
+    border: 1px solid var(--glass-border); box-shadow: none;
+    margin-left: 0.75rem;
+}
+.cta-btn.secondary:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--primary); color: #fff;
+}
+
+/* ---------- Sections / grid / cards ---------- */
+.section { padding: 6rem 2rem; max-width: var(--max-w); margin: 0 auto; }
+.section-title {
+    text-align: center; font-size: 2.5rem; margin-bottom: 4rem;
+    position: relative; display: inline-block;
+    left: 50%; transform: translateX(-50%);
+}
+.section-title::after {
+    content: ''; position: absolute; bottom: -10px; left: 25%;
+    width: 50%; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative; overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+.card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    opacity: 0; transition: opacity 0.3s;
+}
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    border-color: rgba(0, 210, 255, 0.3);
+}
+.card:hover::before { opacity: 1; }
+
+.card-orb-container {
+    position: relative; width: 50px; height: 50px;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; justify-content: center;
+}
+.core-orb {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 20px var(--primary), inset 0 0 8px rgba(255,255,255,0.8);
+    animation: pulseCore 2s infinite alternate; z-index: 2;
+}
+.ring {
+    position: absolute; width: 100%; height: 100%;
+    border: 2px solid rgba(0, 210, 255, 0.15);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 3s linear infinite;
+}
+.ring-reverse {
+    position: absolute; width: 150%; height: 150%;
+    border: 1px dashed rgba(255, 140, 0, 0.3);
+    border-radius: 50%;
+    border-bottom-color: var(--secondary);
+    animation: spinReverse 6s linear infinite;
+}
+@keyframes pulseCore {
+    0%   { transform: scale(0.85); box-shadow: 0 0 10px var(--primary); opacity: 0.8; }
+    100% { transform: scale(1.15); box-shadow: 0 0 25px var(--primary), inset 0 0 12px #fff; opacity: 1; }
+}
+@keyframes spin        { 100% { transform: rotate(360deg); } }
+@keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+
+.icon-tech .core-orb {
+    background: #00ffcc; box-shadow: 0 0 20px #00ffcc;
+    animation: pulseCoreTech 1.5s infinite alternate; border-radius: 8px;
+}
+.icon-tech .ring {
+    border-color: rgba(0, 255, 204, 0.15);
+    border-top-color: #00ffcc; border-bottom-color: #00ffcc;
+    border-width: 2px; border-style: dotted; animation-duration: 4s;
+}
+@keyframes pulseCoreTech {
+    0%   { transform: scale(0.85) rotate(45deg); box-shadow: 0 0 10px #00ffcc; opacity: 0.8; }
+    100% { transform: scale(1.15) rotate(45deg); box-shadow: 0 0 25px #00ffcc, inset 0 0 12px #fff; opacity: 1; }
+}
+
+.icon-cycle .core-orb {
+    background: var(--secondary); box-shadow: 0 0 20px var(--secondary);
+    animation: pulseCoreSecondary 2.5s infinite alternate;
+}
+.icon-cycle .ring {
+    border-color: rgba(255, 140, 0, 0.15);
+    border-left-color: var(--secondary); border-right-color: var(--secondary);
+    animation-duration: 2s;
+}
+@keyframes pulseCoreSecondary {
+    0%   { transform: scale(0.85); box-shadow: 0 0 10px var(--secondary); opacity: 0.8; }
+    100% { transform: scale(1.15); box-shadow: 0 0 25px var(--secondary), inset 0 0 12px #fff; opacity: 1; }
+}
+
+.card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
+.card p  { color: var(--text-muted); font-size: 0.95rem; }
+.card ul { margin-top: 1rem; padding-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem; }
+.card ul li { margin-bottom: 0.5rem; }
+
+/* ---------- Feature row ---------- */
+.feature-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 4rem; margin-bottom: 6rem;
+}
+.feature-row:nth-child(even) { flex-direction: row-reverse; }
+.feature-text { flex: 1; min-width: 300px; }
+.feature-text h2 { font-size: 2.2rem; margin-bottom: 1.5rem; color: var(--primary); }
+.feature-text p  { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+.feature-visual {
+    flex: 1; min-width: 300px; height: 300px;
+    background: linear-gradient(45deg, rgba(0,210,255,0.1), rgba(255,140,0,0.1));
+    border: 1px solid var(--glass-border);
+    border-radius: 20px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.glow-orb {
+    width: 150px; height: 150px; border-radius: 50%;
+    background: var(--primary); filter: blur(50px);
+    opacity: 0.5; animation: pulse 4s infinite alternate;
+}
+.glow-orb.orange { background: var(--secondary); animation-delay: -2s; }
+@keyframes pulse {
+    0%   { transform: scale(0.8); opacity: 0.3; }
+    100% { transform: scale(1.2); opacity: 0.6; }
+}
+
+/* ---------- Footer ---------- */
+footer {
+    background: #050508;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+footer h2 {
+    font-family: 'Outfit', sans-serif; color: #fff;
+    margin-bottom: 1rem; font-size: 1.3rem;
+}
+footer p { color: var(--text-muted); font-size: 0.9rem; }
+
+/* ---------- Resume page ---------- */
+[data-page="resume"] .resume-header {
+    position: relative; min-height: 70vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 6rem 2rem 3rem;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0,210,255,0.12), transparent 50%),
+        radial-gradient(circle at 80% 60%, rgba(255,140,0,0.08), transparent 50%),
+        var(--bg-dark);
+}
+[data-page="resume"] .resume-header-card {
+    position: relative; z-index: 2;
+    max-width: 900px;
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: fadeIn 1s ease-out;
+}
+[data-page="resume"] .resume-name {
+    font-size: 3rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.4rem;
+}
+[data-page="resume"] .resume-title {
+    font-size: 1.25rem; color: #fff;
+    font-weight: 500; margin-bottom: 1rem;
+}
+[data-page="resume"] .resume-contact {
+    display: flex; flex-wrap: wrap;
+    gap: 1.25rem 1.75rem;
+    color: var(--text-muted); font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+[data-page="resume"] .resume-contact span { display: inline-flex; align-items: center; gap: 0.4rem; }
+[data-page="resume"] .resume-summary {
+    color: var(--text-main); font-size: 1.02rem; line-height: 1.7;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.5rem; margin-top: 0.5rem;
+}
+
+[data-page="resume"] .wins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-top: 2rem;
+}
+[data-page="resume"] .win-card {
+    background: rgba(0, 210, 255, 0.05);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.25rem 1rem; text-align: center;
+}
+[data-page="resume"] .win-num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.75rem; font-weight: 900;
+    color: var(--primary); line-height: 1;
+}
+[data-page="resume"] .win-label {
+    font-size: 0.78rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-top: 0.4rem;
+}
+
+/* Git-merge-style timeline
+   --------------------------------------------------------------------------
+   The main track (0) is a single continuous blue rail drawn by the
+   timeline parent. Branches sit on track 1+ and each draws its own rail
+   in a branch-specific colour, with the branch's "origin" dot at the
+   BOTTOM of the item and a quarter-arc merge curve at the TOP that
+   swoops from the branch rail up-and-left to rejoin the main rail.
+   Each branch item picks its colour via data-color.
+   -------------------------------------------------------------------------- */
+[data-page="resume"] .timeline {
+    --track-step: 2.75rem;    /* horizontal distance between tracks
+                                 (also the gutter between branch rail
+                                  and item content) */
+    --rail: 3px;              /* rail thickness */
+    --dot: 14px;              /* commit dot diameter */
+    --color: var(--primary);  /* default branch colour = main blue */
+    --color-glow: rgba(0, 210, 255, 0.5);
+    position: relative;
+    padding-left: 2rem;       /* room for the main rail + label */
+}
+
+/* ---- Branch colour palette (each branch picks one via data-color) ---- */
+[data-page="resume"] .timeline-item[data-color="mint"]     { --color: #34d399; --color-glow: rgba(52, 211, 153, 0.55); }
+[data-page="resume"] .timeline-item[data-color="magenta"]  { --color: #f472b6; --color-glow: rgba(244, 114, 182, 0.55); }
+[data-page="resume"] .timeline-item[data-color="amber"]    { --color: #fbbf24; --color-glow: rgba(251, 191, 36, 0.55); }
+[data-page="resume"] .timeline-item[data-color="coral"]    { --color: #fb7185; --color-glow: rgba(251, 113, 133, 0.55); }
+[data-page="resume"] .timeline-item[data-color="lavender"] { --color: #a78bfa; --color-glow: rgba(167, 139, 250, 0.55); }
+[data-page="resume"] .timeline-item[data-color="cyan"]     { --color: #22d3ee; --color-glow: rgba(34, 211, 238, 0.55); }
+
+/* Main rail: one continuous blue line for the whole timeline */
+[data-page="resume"] .timeline::before {
+    content: '';
+    position: absolute;
+    left: calc(2rem - var(--rail) / 2);   /* align with track-0 rail */
+    top: 0.5rem;                            /* start near first item's dot */
+    bottom: 0.5rem;                         /* end near last item's dot */
+    width: var(--rail);
+    background: linear-gradient(to bottom, var(--primary), rgba(0, 210, 255, 0.35));
+    box-shadow: 0 0 10px var(--color-glow);
+    border-radius: 2px;
+}
+[data-page="resume"] .timeline-item {
+    position: relative;
+    margin-bottom: 2.25rem;
+    padding-bottom: 30px;
+    padding-left: calc(var(--track) * var(--track-step));
+    min-height: 1.5rem;
+}
+[data-page="resume"] .timeline-item[data-track="0"] { --track: 0; }
+[data-page="resume"] .timeline-item[data-track="1"] { --track: 1; }
+[data-page="resume"] .timeline-item[data-track="2"] { --track: 2; }
+
+/* Branch rail: vertical line in the item's branch colour.
+   Brightest at the BOTTOM (where the origin dot lives) and fades toward
+   the TOP (where the merge curve takes over). Extends 0.5rem above the
+   item so it meets the bottom of the merge curve. */
+[data-page="resume"] .timeline-item[data-track="1"]::before,
+[data-page="resume"] .timeline-item[data-track="2"]::before {
+    content: '';
+    position: absolute;
+    left: calc(0px - var(--rail) / 2 + var(--track) * var(--track-step));
+    top: -0.5rem;
+    bottom: 0.4rem;
+    width: var(--rail);
+    background: linear-gradient(to top, var(--color), color-mix(in srgb, var(--color) 35%, transparent));
+    box-shadow: 0 0 6px var(--color-glow);
+    border-radius: 2px;
+}
+
+/* Commit dot — main blue on the trunk, branch colour on side tracks.
+   Anchored at the BOTTOM of the item (the "origin" of the branch). */
+[data-page="resume"] .timeline-item > * { position: relative; }
+[data-page="resume"] .timeline-item::after {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--dot) / 2 + var(--track) * var(--track-step));
+    bottom: 0.35rem;
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 12px var(--primary);
+    z-index: 1;
+}
+[data-page="resume"] .timeline-item[data-track="1"]::after,
+[data-page="resume"] .timeline-item[data-track="2"]::after {
+    background: var(--color);
+    box-shadow: 0 0 10px var(--color-glow);
+}
+
+/* Merge curve: a child <span class="merge"> for items with data-merge.
+   A var(--track-step) square box positioned ABOVE the item, with the
+   branch colour on border-bottom + border-left and border-bottom-left-
+   radius: var(--track-step). The arc in the bottom-left corner sweeps
+   from the branch rail (box bottom-right, at item-top) up-and-left to
+   the main rail (box top-left, var(--track-step) above the item). The
+   curve lives in the gutter above each branch item — between the merge
+   point and the previous item. */
+[data-page="resume"] .timeline-item .merge {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    border: 0 solid transparent;
+    border-bottom: 2px solid var(--color);
+    border-left: 2px solid var(--color);
+    box-shadow: 0 0 8px var(--color-glow);
+    opacity: 0.9;
+}
+[data-page="resume"] .timeline-item[data-merge="in"] .merge {
+    top: calc(-1 * var(--track-step) - 0.5rem);
+    left: 0;
+    width:  var(--track-step);
+    height: var(--track-step);
+    border-top-right-radius: var(--track-step);
+}
+[data-page="resume"] .timeline-item[data-merge="out"] .merge {
+    top: 0;
+    left: 0;
+    width: var(--track-step);
+    height: var(--track-step);
+    border-bottom-right-radius: var(--track-step);
+}
+[data-page="resume"] .timeline-item h3 { font-size: 1.25rem; color: #fff; margin-bottom: 0.2rem; }
+[data-page="resume"] .timeline-item .role {
+    color: var(--secondary); font-weight: 600;
+    font-size: 1rem; margin-bottom: 0.2rem;
+}
+[data-page="resume"] .timeline-item .meta {
+    color: var(--text-muted); font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+[data-page="resume"] .timeline-item ul {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    padding-left: 1.2rem; line-height: 1.7;
+}
+[data-page="resume"] .timeline-item ul li { margin-bottom: 0.3rem; }
+
+/* All timeline items: give the inner content a consistent left padding
+   so it sits clear of the rail (main or branch) and the merge-curve
+   gutter. Main-track items get the same 30px inset as branch items so
+   the role text lines up consistently across the whole timeline. */
+[data-page="resume"] .timeline-item h3,
+[data-page="resume"] .timeline-item .role,
+[data-page="resume"] .timeline-item .meta,
+[data-page="resume"] .timeline-item ul {
+    padding-left: 30px;
+}
+
+[data-page="resume"] .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+[data-page="resume"] .chip {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.82rem;
+    color: var(--text-main);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+}
+[data-page="resume"] .chip.primary { color: var(--primary); border-color: rgba(0,210,255,0.3); }
+[data-page="resume"] .chip.secondary { color: var(--secondary); border-color: rgba(255,140,0,0.3); }
+
+[data-page="resume"] .two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+[data-page="resume"] .two-col h3 { color: var(--primary); margin-bottom: 0.75rem; }
+[data-page="resume"] .two-col ul { padding-left: 1.2rem; color: var(--text-muted); }
+[data-page="resume"] .two-col li { margin-bottom: 0.4rem; }
+
+/* ---------- Case studies page ---------- */
+[data-page="case-studies"] .cs-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem 6rem;
+}
+[data-page="case-studies"] .cs-intro {
+    text-align: center;
+    max-width: 720px; margin: 0 auto 3rem;
+}
+[data-page="case-studies"] .cs-intro h1 {
+    font-size: 2.75rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+[data-page="case-studies"] .cs-intro p { color: var(--text-muted); font-size: 1.05rem; }
+
+[data-page="case-studies"] .tabs {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 2rem; padding-bottom: 0;
+}
+[data-page="case-studies"] .tab-btn {
+    background: transparent; border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 0.75rem 1.25rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer;
+    border-radius: 10px 10px 0 0;
+    transition: all 0.2s;
+}
+[data-page="case-studies"] .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.04); }
+[data-page="case-studies"] .tab-btn.active {
+    color: #fff;
+    background: var(--bg-panel);
+    border-color: var(--glass-border);
+    border-bottom-color: var(--bg-dark);
+    position: relative; bottom: -1px;
+}
+[data-page="case-studies"] .tab-btn.active::after {
+    content: ''; position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 2px; background: var(--primary);
+}
+
+[data-page="case-studies"] .tab-panel {
+    display: none;
+    background: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    animation: fadeIn 0.4s ease-out;
+}
+[data-page="case-studies"] .tab-panel.active { display: block; }
+[data-page="case-studies"] .tab-panel h2 { color: var(--primary); margin-bottom: 0.5rem; }
+[data-page="case-studies"] .tab-panel h3 {
+    color: var(--secondary); margin: 1.5rem 0 0.6rem;
+    font-size: 1.05rem; text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+[data-page="case-studies"] .tab-panel p, [data-page="case-studies"] .tab-panel li { color: var(--text-muted); }
+[data-page="case-studies"] .tab-panel ul { padding-left: 1.4rem; line-height: 1.7; }
+[data-page="case-studies"] .tab-panel li { margin-bottom: 0.3rem; }
+[data-page="case-studies"] .tab-panel .role-line { color: #fff; font-weight: 500; margin-bottom: 1.25rem; }
+[data-page="case-studies"] .tab-panel .stack-line {
+    color: var(--text-muted); font-size: 0.9rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1rem; margin-top: 1.25rem;
+}
+[data-page="case-studies"] .tab-panel.htmx-loading { opacity: 0.5; }
+
+/* Comparison table inside a case study panel */
+[data-page="case-studies"] .tab-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+[data-page="case-studies"] .tab-panel th,
+[data-page="case-studies"] .tab-panel td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-muted);
+}
+[data-page="case-studies"] .tab-panel th {
+    background: rgba(0, 210, 255, 0.08);
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+}
+[data-page="case-studies"] .tab-panel tr:last-child td { border-bottom: none; }
+[data-page="case-studies"] .tab-panel td strong { color: #fff; }
+
+/* Architecture diagram (preserves ASCII art formatting) */
+[data-page="case-studies"] .tab-panel pre.diagram {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+    margin: 1.25rem 0;
+}
+
+/* ---------- htmx indicator utility ---------- */
+.htmx-indicator { display: none; color: var(--primary); font-size: 0.85rem; margin-left: 0.5rem; }
+.htmx-request .htmx-indicator { display: inline; }
+.htmx-request.htmx-indicator { display: inline; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .logo { font-size: 2.5rem; }
+    .hero-content { padding: 2rem; }
+    .feature-row { gap: 2rem; margin-bottom: 4rem; }
+    .section-title { font-size: 2rem; }
+
+    .site-nav ul { gap: 0.5rem; }
+    .site-nav a { padding: 0.4rem 0.5rem; font-size: 0.85rem; }
+
+    [data-page="resume"] .resume-header { padding-top: 3rem; }
+    [data-page="resume"] .resume-name { font-size: 2.2rem; }
+    [data-page="resume"] .resume-header-card { padding: 2rem 1.5rem; }
+    [data-page="resume"] .wins-grid { grid-template-columns: repeat(2, 1fr); }
+
+    [data-page="case-studies"] .cs-shell { padding: 3rem 1rem 4rem; }
+    [data-page="case-studies"] .cs-intro h1 { font-size: 2rem; }
+    [data-page="case-studies"] .tab-panel { padding: 1.5rem; }
+    [data-page="case-studies"] .tab-btn { padding: 0.6rem 0.9rem; font-size: 0.85rem; }
+}
